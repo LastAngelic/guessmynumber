@@ -1,12 +1,16 @@
+import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers';
 import { type } from '@testing-library/user-event/dist/type';
 import React, { Component } from 'react';
 import './Game.css';
+
+let tries = 0;
 
 class Game extends Component {
     constructor() {
         super()
         this.state = {
             number: "",
+            arr: [],
             message: "",
             random: generareRandomNumber(100)
         }
@@ -30,15 +34,19 @@ class Game extends Component {
 
         console.log(random);
 
-        const text = calculateText(number, random);
+        this.state.arr.push(number);
+
+        const text = calculateText(number, random, this.state.arr.length);
 
         this.setState({message: text});
+        
     }
 
     render() {
         //console.log(this.state.random)
         return (
             <div className="game">
+                <h1>ADIVINA EL NUMERO</h1>
                 <input
                 type = "number"
                 value = {this.state.number}
@@ -47,6 +55,9 @@ class Game extends Component {
 
                 <button onClick={this.handleOnClick}>Probar</button>
                 <p>{this.state.message}</p>
+
+                <p>{this.state.arr + " "}</p>
+
             </div>
         );
     }
@@ -58,16 +69,19 @@ function generareRandomNumber(max, min=1){
     return Math.floor(Math.random()*(max-min + min));
 }
 
-function calculateText(number, random) {
-    if(number=== random) {
-        return "Felicidades has acertado!"
+function calculateText(number, random, tries) {
+
+    if(number === random) {
+        return "Felicidades has acertado!" + " tardaste " + tries + " intentos en atinarle"
     }
 
     if(number > random){
-        return "Tu numero es mayor"
+        tries++;
+        return number + " es mayor"
     }
 
     if(number < random){
-        return "Tu numero es menor"
+        tries++;
+        return number + " es menor"
     }
 }
